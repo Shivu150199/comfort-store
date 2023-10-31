@@ -4,7 +4,7 @@ import SubmitBtn from "./SubmitBtn"
 import { clearCart } from "../features/cart/cartSlice";
 import { customFetch, formatPrice } from "../utils";
 
-export const action=(store)=>async ({request})=>{
+export const action=(store,queryClient)=>async ({request})=>{
     const formData=await request.formData();
     const {name,address}=Object.fromEntries(formData);
     const user=store.getState().userState.user;
@@ -21,29 +21,32 @@ export const action=(store)=>async ({request})=>{
       numItemsInCart,
     }
 
-try {
-  const response = await customFetch.post(
-    '/orders',
-    { data: info },
-    {
-      headers: {
-        Authorization: `Bearer ${user.token}`,
-      },
-    }
-  )
-  store.dispatch(clearCart())
-//   toast.success('order placed successfully')
-  return redirect('/orders')
-} catch (error) {
-  console.log(error)
-  const errorMessage =
-    error?.response?.data?.error?.message ||
-    'there was an error placing your order'
-//   toast.error(errorMessage)
-  if (error?.response?.status === 401 || 403) return redirect('/login')
+  try {
+    const response = await customFetch.post(
+      '/orders',
+      { data: info },
+      {
+        headers: {
+          Authorization: `Bearer ${user.token}`,
+        },
+      }
+    )
+    // remove query
+    queryClient.removeQueries(['orders'])
+    // rest of the code
+    store.dispatch(clearCart())
+    // toast.success('order placed successfully')
+    return redirect('/orders')
+  } catch (error) {
+    // console.log(error)
+    const errorMessage =
+      error?.response?.data?.error?.message ||
+      'there was an error placing your order'
+    //   toast.error(errorMessage)
+    if (error?.response?.status === 401 || 403) return redirect('/login')
 
-  return null
-}
+    return null
+  }
 
 }
 
