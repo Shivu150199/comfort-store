@@ -19,7 +19,7 @@ import { ErrorElement } from './components'
 import {loader as landingLoader} from './Pages/Landing'
 import {loader as singleProductLoader} from './Pages/SingleProducts'
 import {loader as productsLoader} from './Pages/Products'
-import { action as loginAction } from './pages/Login'
+import { action as loginAction } from './Pages/Login'
 
 import {loader as checkoutLoader} from './Pages/Checkout'
 import { store } from '../store'
